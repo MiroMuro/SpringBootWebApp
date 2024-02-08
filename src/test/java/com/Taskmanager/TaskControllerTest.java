@@ -28,10 +28,11 @@ public class TaskControllerTest {
 		//Post here and status below are STATIC imports, so need to create an instance of an mvc-whatever.
 		ResultActions result = mockMvc.perform(post("/api/tasks")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(taskJSON));
-		
+				.content(taskJSON));		
 		//Assert 
-		result.andExpect(status().isCreated());
+		//The id is hard coded here, for the id is generated automatically by Jakarta Persistence API in com.Taskmanager.entity.Task
+		result.andExpect(status().isCreated())
+			  .andExpect(header().string("Location", "http://localhost:8080/api/tasks/4"));
 			   
 	}
 }

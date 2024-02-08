@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,8 +50,16 @@ public class TaskController {
 	//Create
 	@PostMapping
 	public ResponseEntity<Task> createTask(@RequestBody Task task) {
-		Task createdTask = taskservice.SaveTask(task);		
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+		Task createdTask = taskservice.SaveTask(task);
+		
+		HttpHeaders responseHeaders = new HttpHeaders();
+		//Add the url of the created task as an header to the response.
+		responseHeaders.set("Location", "http://localhost:8080/api/tasks/"+task.getId()+"");
+
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.headers(responseHeaders)
+				.body(createdTask);
 	}
 	//Update
 	@PutMapping("/{id}")
