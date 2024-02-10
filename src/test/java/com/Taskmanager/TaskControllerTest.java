@@ -50,12 +50,38 @@ public class TaskControllerTest {
 	}
 	@Test
 	public void testFetchAllTasks() throws Exception{
-		   
 		//Act
 		ResultActions result = mockMvc.perform(get("/api/tasks").contentType(MediaType.APPLICATION_JSON));
 		//Check for the example data inserted by DataLoader.java.
 		result.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 		.andExpect(jsonPath("$",hasSize(3)));
+		
+	}
+	@Test
+	public void testGetSingleTask() throws Exception{
+		//Arrange
+		Long userId = 1L;
+		
+		//Act
+		ResultActions result = mockMvc.perform(get("/api/tasks/{id}",userId));
+		
+		//Arrange
+		result.andExpect(status().isOk())
+		  .andExpect((content().contentType(MediaType.APPLICATION_JSON)))
+		  .andExpect(jsonPath("$.*", hasSize(4)))
+		  .andExpect(jsonPath("$.id").value(userId))
+		  .andExpect(jsonPath("$.title").value("Take the trashes out!"))
+		  .andExpect(jsonPath("$.description").value("The trashes need to be taken out daily"))
+		  .andExpect(jsonPath("$.completed").value(false));
+		
+				  
+
+		
+	}
+	@Test
+	public void testUpdateTask() throws Exception{
+	}
+	public void testDeleteTask() throws Exception{
 		
 	}
 }
