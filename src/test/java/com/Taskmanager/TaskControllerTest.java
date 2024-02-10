@@ -60,16 +60,16 @@ public class TaskControllerTest {
 	@Test
 	public void testGetSingleTask() throws Exception{
 		//Arrange
-		Long userId = 1L;
+		Long taskId = 1L;
 		
 		//Act
-		ResultActions result = mockMvc.perform(get("/api/tasks/{id}",userId));
+		ResultActions result = mockMvc.perform(get("/api/tasks/{id}",taskId));
 		
 		//Arrange
 		result.andExpect(status().isOk())
 		  .andExpect((content().contentType(MediaType.APPLICATION_JSON)))
 		  .andExpect(jsonPath("$.*", hasSize(4)))
-		  .andExpect(jsonPath("$.id").value(userId))
+		  .andExpect(jsonPath("$.id").value(taskId))
 		  .andExpect(jsonPath("$.title").value("Take the trashes out!"))
 		  .andExpect(jsonPath("$.description").value("The trashes need to be taken out daily"))
 		  .andExpect(jsonPath("$.completed").value(false));
@@ -80,6 +80,50 @@ public class TaskControllerTest {
 	}
 	@Test
 	public void testUpdateTask() throws Exception{
+		//Arrange
+		var modifiedTask = new Task("Clean the trashcans","The trashcans are getting dirty",false);
+		String modifiedTaskJson = objMapper.writeValueAsString(modifiedTask);
+		Long taskId = 1L;
+		
+		//Act
+		ResultActions result = mockMvc.perform(put("/api/tasks/{id}",taskId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(modifiedTaskJson));
+		
+	    result.andExpect(status().isOk())
+	    	  .andExpect(jsonPath("$.id").value(taskId))
+	    	  .andExpect(jsonPath("$.title").value("Clean the trashcans"))
+	    	  .andExpect(jsonPath("$.description").value("The trashcans are getting dirty"))
+	    	  .andExpect(jsonPath("$.completed").value(false))
+	    	  .andDo(print());
+	}
+	@Test
+	public void testUpdatedTaskIsAppended() throws Exception{
+		var modifiedTask = new Task("Clean the trashcans","The trashcans are getting dirty",false);
+		String modifiedTaskJson = objMapper.writeValueAsString(modifiedTask);
+		Long taskId = 1L;
+		
+		//Act
+		ResultActions result = mockMvc.perform(put("/api/tasks/{id}",taskId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(modifiedTaskJson));
+		
+		ResultActions allTasks = mockMvc.perform(get("/api/tasks"));
+		
+		//Assert 
+		//Updated task is returned
+	    result.andExpect(status().isOk())
+	    	  .andExpect(jsonPath("$.id").value(taskId))
+	    	  .andExpect(jsonPath("$.title").value("Clean the trashcans"))
+	    	  .andExpect(jsonPath("$.description").value("The trashcans are getting dirty"))
+	    	  .andExpect(jsonPath("$.completed").value(false));
+	    //Updated task is appended to the list containing all tasks.
+	    allTasks.andExpect(jsonPath("$[0].id").value(1))
+	    		.andExpect(jsonPath("$[0].title").value("Clean the trashcans"))
+	            .andExpect(jsonPath("$[0].description").value("The trashcans are getting dirty"))
+	            .andExpect(jsonPath("$[0].completed").value(false));
+	    
+	    
 	}
 	public void testDeleteTask() throws Exception{
 		
