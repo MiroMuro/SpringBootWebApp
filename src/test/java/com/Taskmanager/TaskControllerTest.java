@@ -1,7 +1,9 @@
 package com.Taskmanager;
 import static org.hamcrest.Matchers.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +13,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
 
@@ -19,12 +25,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //static imports: MockMvcRequestBuilders.*, MockMvcResultMatchers.*
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TaskControllerTest {
 	ObjectMapper objMapper = new ObjectMapper();
 	@Autowired
 	private MockMvc mockMvc;
 	
 	@Test
+	@Order(1)
 	public void testCreateTask() throws Exception{
 		//Arrange
 		Task task = new Task("Task title","Task description",true);
@@ -49,15 +57,17 @@ public class TaskControllerTest {
 			   
 	}
 	@Test
+	@Order(2)
 	public void testFetchAllTasks() throws Exception{
 		//Act
 		ResultActions result = mockMvc.perform(get("/api/tasks").contentType(MediaType.APPLICATION_JSON));
 		//Check for the example data inserted by DataLoader.java.
 		result.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$",hasSize(3)));
+		.andExpect(jsonPath("$",hasSize(4)));
 		
 	}
 	@Test
+	@Order(3)
 	public void testGetSingleTask() throws Exception{
 		//Arrange
 		Long taskId = 1L;
@@ -73,12 +83,9 @@ public class TaskControllerTest {
 		  .andExpect(jsonPath("$.title").value("Take the trashes out!"))
 		  .andExpect(jsonPath("$.description").value("The trashes need to be taken out daily"))
 		  .andExpect(jsonPath("$.completed").value(false));
-		
-				  
-
-		
 	}
 	@Test
+	@Order(4)
 	public void testUpdateTask() throws Exception{
 		//Arrange
 		var modifiedTask = new Task("Clean the trashcans","The trashcans are getting dirty",false);
@@ -96,36 +103,37 @@ public class TaskControllerTest {
 	    	  .andExpect(jsonPath("$.description").value("The trashcans are getting dirty"))
 	    	  .andExpect(jsonPath("$.completed").value(false))
 	    	  .andDo(print());
+	    
+		ResultActions allTasks = mockMvc.perform(get("/api/tasks")).andDo(print());
+		
+		allTasks.andExpect(jsonPath("$[0].title").value("Clean the trashcans"))
+        .andExpect(jsonPath("$[0].description").value("The trashcans are getting dirty"))
+        .andExpect(jsonPath("$[0].completed").value(false));
+
 	}
+	
+	
 	@Test
-	public void testUpdatedTaskIsAppended() throws Exception{
-		var modifiedTask = new Task("Clean the trashcans","The trashcans are getting dirty",false);
-		String modifiedTaskJson = objMapper.writeValueAsString(modifiedTask);
+	@Order(6)
+	public void testDeleteTask() throws Exception{
+		//Arrange
 		Long taskId = 1L;
 		
 		//Act
-		ResultActions result = mockMvc.perform(put("/api/tasks/{id}",taskId)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(modifiedTaskJson));
+		ResultActions allTasksBeforeDelete = mockMvc.perform(get("/api/tasks"));
+
+		ResultActions result = mockMvc.perform(delete("/api/tasks/{id}",taskId));
 		
-		ResultActions allTasks = mockMvc.perform(get("/api/tasks"));
+		ResultActions allTasksAfterDelete = mockMvc.perform(get("/api/tasks"));
+
 		
-		//Assert 
-		//Updated task is returned
-	    result.andExpect(status().isOk())
-	    	  .andExpect(jsonPath("$.id").value(taskId))
-	    	  .andExpect(jsonPath("$.title").value("Clean the trashcans"))
-	    	  .andExpect(jsonPath("$.description").value("The trashcans are getting dirty"))
-	    	  .andExpect(jsonPath("$.completed").value(false));
-	    //Updated task is appended to the list containing all tasks.
-	    allTasks.andExpect(jsonPath("$[0].id").value(1))
-	    		.andExpect(jsonPath("$[0].title").value("Clean the trashcans"))
-	            .andExpect(jsonPath("$[0].description").value("The trashcans are getting dirty"))
-	            .andExpect(jsonPath("$[0].completed").value(false));
-	    
-	    
-	}
-	public void testDeleteTask() throws Exception{
+		//Assert
+		result.andExpect(status().isOk());
+		
+		
+		allTasksBeforeDelete.andExpect(jsonPath("$",hasSize(4)));
+		allTasksAfterDelete.andExpect(jsonPath("$",hasSize(3)));
+
 		
 	}
 }
