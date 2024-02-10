@@ -20,7 +20,9 @@ public class Task {
 	boolean completed;
 	
 	
-	
+	public Task() {
+		
+	}
 	public Task( String title, String desc, boolean completed) {
 		this.title = title;
 		this.description = desc;
@@ -33,8 +35,6 @@ public class Task {
 	public Long getId() {
 		return id;
 	}
-
-	
 
 	public String getTitle() {
 		return title;
