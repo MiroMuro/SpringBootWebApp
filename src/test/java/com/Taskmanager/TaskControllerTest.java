@@ -52,8 +52,6 @@ public class TaskControllerTest {
 			  .andExpect(jsonPath("$.title").value(task.getTitle()))
 			  .andExpect(jsonPath("$.description").value(task.getDescription()))
 			  .andExpect(jsonPath("$.completed").value(task.isCompleted()));
-			  
-		
 			   
 	}
 	@Test
@@ -101,10 +99,9 @@ public class TaskControllerTest {
 	    	  .andExpect(jsonPath("$.id").value(taskId))
 	    	  .andExpect(jsonPath("$.title").value("Clean the trashcans"))
 	    	  .andExpect(jsonPath("$.description").value("The trashcans are getting dirty"))
-	    	  .andExpect(jsonPath("$.completed").value(false))
-	    	  .andDo(print());
+	    	  .andExpect(jsonPath("$.completed").value(false));
 	    
-		ResultActions allTasks = mockMvc.perform(get("/api/tasks")).andDo(print());
+		ResultActions allTasks = mockMvc.perform(get("/api/tasks"));
 		
 		allTasks.andExpect(jsonPath("$[0].title").value("Clean the trashcans"))
         .andExpect(jsonPath("$[0].description").value("The trashcans are getting dirty"))
@@ -125,12 +122,11 @@ public class TaskControllerTest {
 		ResultActions result = mockMvc.perform(delete("/api/tasks/{id}",taskId));
 		
 		ResultActions allTasksAfterDelete = mockMvc.perform(get("/api/tasks"));
-
 		
 		//Assert
-		result.andExpect(status().isOk());
-		
-		
+		result.andExpect(status().isOk())
+		.andExpect(content().string("Task deleted succesfully!"))
+		.andDo(print());
 		allTasksBeforeDelete.andExpect(jsonPath("$",hasSize(4)));
 		allTasksAfterDelete.andExpect(jsonPath("$",hasSize(3)));
 
