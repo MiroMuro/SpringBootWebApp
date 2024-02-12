@@ -63,16 +63,25 @@ public class TaskController {
 	}
 	//Update
 	@PutMapping("/{id}")
-	public ResponseEntity<Task>updateTask(@RequestBody Task task, @PathVariable Long id) {
+	public ResponseEntity<String>updateTask(@RequestBody Task task, @PathVariable Long id) {
 		task.setId(id);
-		Task updatedTask = taskservice.updateTask(task);
-		return ResponseEntity.ok(updatedTask);
+		
+		
+		return taskservice.updateTask(task)
+			   .map(returnedTask -> ResponseEntity.ok().body(returnedTask.toString()+" Updated succesfully!"))
+			   .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task with given id: "+id+" not found."));
 	}
 	//Delete
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteTask(@PathVariable Long id) {
-		taskservice.deleteTask(id);
-		return ResponseEntity.ok().body("Task deleted succesfully!");
+		//return ResponseEntity.ok().body("Task deleted succesfully!");
+		
+		if(taskservice.deleteTask(id)) {
+			return ResponseEntity.ok().body("Task deleted succesfully!");
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(("Couldn't delte task with id: "+id+".\nTask not found."));
+		
+		
 	}
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleException(Exception e){

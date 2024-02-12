@@ -29,6 +29,13 @@ public class Task {
 		this.completed = completed;
 	}
 	
+	public Task(long l, String string, String string2, boolean b) {
+		this.id = l;
+		this.title = string;
+		this.description = string2;
+		this.completed = b;
+		// TODO Auto-generated constructor stub
+	}
 	public void setId(Long id) {
 		this.id = id;
 	}

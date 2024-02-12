@@ -31,18 +31,46 @@ public class TaskService {
 	};
 	
 	public Optional<Task> getTaskById(Long id) {
-		return taskrepository.findById(id);
-	}
-	
-	public Task updateTask(Task task) {
-		return taskrepository.save(task);
-	}
-	
-	public void deleteTask(Long id) {
-		try {
-			taskrepository.deleteById(id);
-		} catch(IllegalArgumentException e){
-			System.out.println(e.toString());
+		
+		Optional<Task> taskToReturn = java.util.Optional.empty();
+		
+		if(taskrepository.existsById(id)) {
+			return taskToReturn = taskrepository.findById(id);
 		}
+		
+		return taskToReturn;
+		
+		
+	}
+	
+	public Optional<Task> updateTask(Task task) {
+
+		Optional<Task> taskToReturn = java.util.Optional.empty();
+		
+		
+		if(taskrepository.existsById(task.getId())) {
+			taskrepository.save(task);
+			
+			taskToReturn = Optional.of(task);
+			
+			return taskToReturn;
+		} 
+		return taskToReturn;
+		
+		
+		
+	}
+	
+	public boolean deleteTask(Long id) {
+			
+			if(taskrepository.existsById(id)) {
+				taskrepository.deleteById(id);
+				return true;
+			} 
+			return false;
+			
+			
+			
+		
 	}
 }

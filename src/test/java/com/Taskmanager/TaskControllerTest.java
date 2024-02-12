@@ -59,7 +59,7 @@ public class TaskControllerTest {
 	public void testFetchAllTasks() throws Exception{
 		//Act
 		ResultActions result = mockMvc.perform(get("/api/tasks").contentType(MediaType.APPLICATION_JSON));
-		//Check for the example data inserted by DataLoader.java.
+		//Check for the example data inserted by DataLoader.java and the previous test.
 		result.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 		.andExpect(jsonPath("$",hasSize(4)));
 		
@@ -73,7 +73,7 @@ public class TaskControllerTest {
 		//Act
 		ResultActions result = mockMvc.perform(get("/api/tasks/{id}",taskId));
 		
-		//Arrange
+		//Assert
 		result.andExpect(status().isOk())
 		  .andExpect((content().contentType(MediaType.APPLICATION_JSON)))
 		  .andExpect(jsonPath("$.*", hasSize(4)))
@@ -86,7 +86,7 @@ public class TaskControllerTest {
 	@Order(4)
 	public void testUpdateTask() throws Exception{
 		//Arrange
-		var modifiedTask = new Task("Clean the trashcans","The trashcans are getting dirty",false);
+		var modifiedTask = new Task(1L,"Clean the trashcans","The trashcans are getting dirty",false);
 		String modifiedTaskJson = objMapper.writeValueAsString(modifiedTask);
 		Long taskId = 1L;
 		
@@ -96,11 +96,10 @@ public class TaskControllerTest {
 				.content(modifiedTaskJson));
 		
 	    result.andExpect(status().isOk())
-	    	  .andExpect(jsonPath("$.id").value(taskId))
-	    	  .andExpect(jsonPath("$.title").value("Clean the trashcans"))
-	    	  .andExpect(jsonPath("$.description").value("The trashcans are getting dirty"))
-	    	  .andExpect(jsonPath("$.completed").value(false));
+	    	  .andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))
+	    	  .andExpect(content().string(modifiedTask.toString()+" Updated succesfully!"));
 	    
+	    //Assert that the updated task is appended in the db correctly.
 		ResultActions allTasks = mockMvc.perform(get("/api/tasks"));
 		
 		allTasks.andExpect(jsonPath("$[0].title").value("Clean the trashcans"))
@@ -125,11 +124,48 @@ public class TaskControllerTest {
 		
 		//Assert
 		result.andExpect(status().isOk())
-		.andExpect(content().string("Task deleted succesfully!"))
-		.andDo(print());
+		.andExpect(content().string("Task deleted succesfully!"));
 		allTasksBeforeDelete.andExpect(jsonPath("$",hasSize(4)));
 		allTasksAfterDelete.andExpect(jsonPath("$",hasSize(3)));
 
+	}
+	@Test
+	@Order(7)
+	public void testDeleteTaskWithNonexistentId() throws Exception{
+		
+		//Arrange
+		Long nonExistentTaskId = 8298989898912L;
+		
+		//Act
+		ResultActions result = mockMvc.perform(delete("/api/tasks/{id}",nonExistentTaskId));
+		
+		//Assert
+		result.andExpect(status().isNotFound());
 		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
