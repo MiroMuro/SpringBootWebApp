@@ -79,7 +79,7 @@ public class TaskController {
 		if(taskservice.deleteTask(id)) {
 			return ResponseEntity.ok().body("Task deleted succesfully!");
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(("Couldn't delte task with id: "+id+".\nTask not found."));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(("Couldn't delete task with id: "+id+".\nTask not found."));
 		
 		
 	}

@@ -140,8 +140,22 @@ public class TaskControllerTest {
 		ResultActions result = mockMvc.perform(delete("/api/tasks/{id}",nonExistentTaskId));
 		
 		//Assert
-		result.andExpect(status().isNotFound());
+		result.andExpect(status().isNotFound())
+		       .andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))
+		       .andExpect(content().string("Couldn't delete task with id: "+nonExistentTaskId+".\nTask not found."));		
+	}
+	
+	@Test
+	@Order(8)
+	public void testGetTaskWithNonExistentId() throws Exception{
 		
+		//Arrange
+		Long nonExistentTaskId = 8298989898912L;
+
+		//Act
+		ResultActions result = mockMvc.perform(get("/api/tasks/{id}",nonExistentTaskId));
+		
+		result.andExpect(status().isNotFound());
 	}
 	
 	
