@@ -23,8 +23,8 @@ public class UserController {
 	private UserService userService;
 	
 	@PostMapping(value="/save")
-	public String saveUser(@RequestBody UserDTO userDto) {
-		String userFromDb = userService.addUser(userDto);
+	public User saveUser(@RequestBody UserDTO userDto) {
+		User userFromDb = userService.addUser(userDto);
 		return userFromDb;
 	}
 	@PostMapping(value="/login")

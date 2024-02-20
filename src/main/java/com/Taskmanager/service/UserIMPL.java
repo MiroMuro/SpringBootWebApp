@@ -26,16 +26,18 @@ public class UserIMPL implements UserService {
 	
 	//Add an user to the db and return its name.
 	@Override
-	public String addUser(UserDTO userDTO) {
+	public User addUser(UserDTO userDTO) {
 		User user = new User(
 				userDTO.getId(),
+				userDTO.getFirstname(),
+				userDTO.getLastname(),
 				userDTO.getUsername(),
 				this.passwordEncoder.encode(userDTO.getPassword()),
 				userDTO.getEmail());
 		
 		userRepo.save(user);
 		System.out.println(user.toString());
-		return user.getId()+ user.getUsername() + user.getEmail();
+		return user;
 	}
 	
 	//Function for login validation.

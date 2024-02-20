@@ -10,6 +10,6 @@ import com.Taskmanager.entity.User;
 import com.Taskmanager.repository.UserRepository;
 @Service("userService")
 public interface UserService {
-	String addUser(UserDTO userDTO);
+	User addUser(UserDTO userDTO);
 	LoginResponse loginUser(LoginDTO loginDto);
 }

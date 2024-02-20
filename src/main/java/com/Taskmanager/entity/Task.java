@@ -1,9 +1,12 @@
 package com.Taskmanager.entity;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 
 @Table
@@ -11,29 +14,33 @@ import jakarta.persistence.Column;
 public class Task {
 	@Id
 	@GeneratedValue
-	Long id;
+	private Long id;
 	@Column(nullable= false) 
-	String title;
+	private String title;
 	@Column(nullable= false) 
-	String description;
+	private String description;
 	@Column(nullable= false) 
-	boolean completed;
-	
+	private boolean completed;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(nullable= false, name="user_id")
+	private User user;
 	
 	public Task() {
 		
 	}
-	public Task( String title, String desc, boolean completed) {
+	public Task( String title, String desc, boolean completed, User user ) {
 		this.title = title;
 		this.description = desc;
 		this.completed = completed;
+		this.user = user;
 	}
 	
-	public Task(long l, String string, String string2, boolean b) {
+	public Task(long l, String string, String string2, boolean b,User user) {
 		this.id = l;
 		this.title = string;
 		this.description = string2;
 		this.completed = b;
+		this.user = user;
 		// TODO Auto-generated constructor stub
 	}
 	public void setId(Long id) {

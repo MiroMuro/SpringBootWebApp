@@ -5,11 +5,15 @@ public class UserDTO {
 	
 	private long id;
 	private String username;
+	private String firstname;
+	private String lastname;
 	private String email;
 	private String password;
-	public UserDTO(long userId, String username, String email, String password) {
+	public UserDTO(long userId, String firstname, String lastname, String username, String email, String password) {
 		super();
 		this.id = userId;
+		this.firstname = firstname;
+		this.lastname = lastname;
 		this.username = username;
 		this.email = email;
 		this.password = password;
@@ -25,6 +29,22 @@ public class UserDTO {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
 	public String getUsername() {

@@ -15,6 +15,7 @@ public class DataLoader implements CommandLineRunner {
 	//Class used for loading example data into the database upon app start.
 	@Autowired
 	private TaskService taskService;
+	@Autowired
 	private UserService userService;
 	
 	public DataLoader(TaskService taskService) {
@@ -25,6 +26,7 @@ public class DataLoader implements CommandLineRunner {
 		// TODO Auto-generated method stub
 		try {
 			loadDemoTaskData();
+			loadDemoUserData();
 		} catch(Exception e) {
 			System.out.println(e.toString());
 		}
@@ -32,13 +34,14 @@ public class DataLoader implements CommandLineRunner {
 	}
 	
 	public void loadDemoTaskData() {
-		taskService.SaveTask(new Task("Take the trashes out!","The trashes need to be taken out daily",false));
-		taskService.SaveTask(new Task("Walk the dogs!","The dogs need to go for a walk multiple times a day",true));
-		taskService.SaveTask(new Task("Apply for a job!","You need to apply for a summer job",true));
+		User user = userService.addUser(new UserDTO(1L,"Peter","Griffin","petergamer23","pete@gmail.com","salis"));
+		taskService.SaveTask(new Task("Take the trashes out!","The trashes need to be taken out daily",false, user));
+		taskService.SaveTask(new Task("Walk the dogs!","The dogs need to go for a walk multiple times a day",false,user));
+		taskService.SaveTask(new Task("Apply for a job!","You need to apply for a summer job",true,user));
 	}
 	
 	public void loadDemoUserData() {
-		userService.addUser(new UserDTO(1L,"peter","pete@gmail.com","salis"));
+		userService.addUser(new UserDTO(1L,"Peter","Griffin","petergamer23","pete@gmail.com","salis"));
 	}
 	
 }
