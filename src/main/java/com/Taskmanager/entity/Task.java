@@ -6,11 +6,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 
 @Table
 @Entity
+@JsonIdentityInfo(
+		  generator = ObjectIdGenerators.PropertyGenerator.class, 
+		  property = "id")
 public class Task {
 	@Id
 	@GeneratedValue
@@ -21,14 +29,23 @@ public class Task {
 	private String description;
 	@Column(nullable= false) 
 	private boolean completed;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(nullable= false, name="user_id")
 	private User user;
 	
 	public Task() {
 		
 	}
-	public Task( String title, String desc, boolean completed, User user ) {
+	
+	public Task( String title, String desc, boolean completed ) {
+		this.title = title;
+		this.description = desc;
+		this.completed = completed;
+		
+	}
+	
+	public Task( String title, String desc, boolean completed,User user ) {
 		this.title = title;
 		this.description = desc;
 		this.completed = completed;
@@ -73,10 +90,22 @@ public class Task {
 	public void setCompleted(boolean completed) {
 		this.completed = completed;
 	}
+	
+	public User getUser() {
+		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Override
 	public String toString() {
 		return "Task [id=" + id + ", title=" + title + ", description=" + description + ", completed=" + completed
-				+ "]";
+				+ ", user=" + user.getUsername()+ "]";
 	}
+	
+	
+	
 	
 }

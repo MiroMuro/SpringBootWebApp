@@ -1,6 +1,11 @@
 package com.Taskmanager.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -14,6 +19,9 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
+@JsonIdentityInfo(
+		  generator = ObjectIdGenerators.PropertyGenerator.class,
+		  property = "id")
 public class User {
 	
 	@Id
@@ -30,8 +38,11 @@ public class User {
 	private String password;
 	@Column(name="user_email", nullable= false)
 	private String email;
+	@JsonManagedReference
 	@OneToMany(fetch = FetchType.LAZY, mappedBy ="user", cascade = CascadeType.ALL)
 	private List<Task> taskList;
+	
+	public User() {}
 	
 	public User(Long id,String firstname, String lastname, String username, String password, String email) {
 		super();
@@ -45,7 +56,7 @@ public class User {
 	
 	
 
-	public User() {}
+	
 	
 	public Long getId() {
 		return id;
@@ -72,8 +83,6 @@ public class User {
 	}
 
 	
-	
-
 
 	public String getUsername() {
 		return username;
@@ -98,10 +107,18 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public List<Task> getTasklist() {
+		return taskList;
+	}
+	
+	public void setTaskList(List<Task> tasklist) {
+		this.taskList = tasklist;
+	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", firstname=" + firstname + ", lastname=" + lastname
-				+ ", password=" + password + ", email=" + email + "]";
+		return "User [id=" + id + ",\n username=" + username + ",\n firstname=" + firstname + ",\n lastname=" + lastname
+				+ ",\n password=" + password + ",\n email=" + email +",\n taskList="+taskList+ "]";
 	}
 
 	

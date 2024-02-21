@@ -1,5 +1,7 @@
 package com.Taskmanager.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +14,5 @@ import com.Taskmanager.repository.UserRepository;
 public interface UserService {
 	User addUser(UserDTO userDTO);
 	LoginResponse loginUser(LoginDTO loginDto);
+	User findUserByID (Long id);
 }

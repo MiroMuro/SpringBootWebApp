@@ -23,7 +23,9 @@ public class TaskService {
 	//CREATE
 	
 	public Task SaveTask(Task task) {
-		return taskrepository.save(task);
+		Task t = taskrepository.save(task);
+		System.out.println("Serviceessä"+t);
+		return t;
 	};
 	
 	public List<Task>getAllTasks(){

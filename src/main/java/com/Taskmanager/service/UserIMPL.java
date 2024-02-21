@@ -66,4 +66,12 @@ public class UserIMPL implements UserService {
 			return new LoginResponse("Email doesn't exist!",false);
 		}
 	}
+
+	@Override
+	public User findUserByID(Long id) {
+		User user = userRepo.findById(id).orElseThrow(IllegalArgumentException::new);
+		
+		return user;
+	}
+		 
 }

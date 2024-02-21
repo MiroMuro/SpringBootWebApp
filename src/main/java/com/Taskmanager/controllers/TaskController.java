@@ -1,5 +1,6 @@
 package com.Taskmanager.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Taskmanager.service.TaskService;
+import com.Taskmanager.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.Taskmanager.entity.Task;
+import com.Taskmanager.entity.User;
+import com.Taskmanager.repository.UserRepository;
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -29,7 +36,11 @@ public class TaskController {
 	public TaskController(TaskService taskservice) {
 		this.taskservice = taskservice;
 	}
+	@Autowired
+	private UserService userService;
 	
+	@Autowired
+	private UserRepository userRepo;
 	// CRUD Create, read, update, Delete
 	
 	//Read all
@@ -49,9 +60,32 @@ public class TaskController {
 	
 	//Create
 	@PostMapping
-	public ResponseEntity<Task> createTask(@RequestBody Task task) {
+	public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestParam(name ="id") Long id) throws JsonProcessingException {
+		
+		
+		User user = userService.findUserByID(id);
+		
+		Task xd = new Task(task.getTitle(),task.getDescription(),task.isCompleted(),user);
+		
+		task.setUser(user);
+		
+		List<Task> blogs = user.getTasklist();
+		
 		Task createdTask = taskservice.SaveTask(task);
 		
+		blogs.add(createdTask);
+		System.out.println("USER FOUND HERE: "+user);
+		user.setTaskList(blogs);
+		
+		String itemJson = new ObjectMapper().writeValueAsString(createdTask.getUser());
+		
+		userRepo.save(user);
+		
+		User user2 = userService.findUserByID(id);
+		System.out.println(user2);
+		System.out.println(itemJson);
+
+
 		HttpHeaders responseHeaders = new HttpHeaders();
 		//Add the url of the created task as an header to the response.
 		responseHeaders.set("Location", "http://localhost:8080/api/tasks/"+task.getId()+"");

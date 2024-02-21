@@ -1,5 +1,8 @@
 package com.Taskmanager.Dto;
 
+import java.util.List;
+
+import com.Taskmanager.entity.Task;
 
 public class UserDTO {
 	
@@ -9,6 +12,7 @@ public class UserDTO {
 	private String lastname;
 	private String email;
 	private String password;
+	private List<Task> taskList;
 	public UserDTO(long userId, String firstname, String lastname, String username, String email, String password) {
 		super();
 		this.id = userId;
@@ -17,6 +21,7 @@ public class UserDTO {
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		
 	}
 	
 	public UserDTO() {
@@ -69,6 +74,13 @@ public class UserDTO {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public List<Task> getTasklist() {
+		return taskList;
+	}
+	
+	public void setTaskList(List<Task> tasklist) {
+		this.taskList = tasklist;
 	}
 
 	

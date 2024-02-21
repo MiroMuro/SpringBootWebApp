@@ -24,6 +24,8 @@ public class UserController {
 	
 	@PostMapping(value="/save")
 	public User saveUser(@RequestBody UserDTO userDto) {
+		
+		
 		User userFromDb = userService.addUser(userDto);
 		return userFromDb;
 	}
